@@ -1,0 +1,27 @@
+# 忽略环境变量文件
+.env.local
+
+# 忽略密钥文件夹
+keys/
+
+# 忽略node_modules文件夹
+node_modules/
+
+# 忽略构建输出
+dist/
+build/
+
+# 忽略日志文件
+*.log
+logs/
+
+# 忽略编辑器文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 忽略操作系统文件
+.DS_Store
+Thumbs.db

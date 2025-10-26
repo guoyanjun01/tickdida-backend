@@ -1,0 +1,26 @@
+{
+  "name": "tickdida-backend",
+  "version": "1.0.0",
+  "description": "滴答滴答后端服务",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "ts-node server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "alipay-sdk": "^4.14.0",
+    "express": "^4.18.2",
+    "next": "^13.0.0",
+    "prisma": "^5.0.0",
+    "stripe": "^12.9.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.11.9",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3"
+  },
+  "author": "",
+  "license": "ISC"
+}
