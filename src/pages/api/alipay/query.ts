@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+// import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 
@@ -18,26 +18,34 @@ interface QueryResponse {
 }
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<QueryResponse>
+  req: Request,
+  ctx: any
 ) {
   try {
     // 支持GET和POST请求
     if (req.method !== 'GET' && req.method !== 'POST') {
-      return res.status(405).json({
+      return new Response(JSON.stringify({
         success: false,
         message: 'Method not allowed'
-      });
+      }), { status: 405, headers: { 'Content-Type': 'application/json' } });
     }
 
     // 获取订单ID
-    const orderId = req.method === 'GET' ? req.query.orderId as string : (req.body as QueryRequest).orderId;
+    let orderId: string | undefined;
+    if (req.method === 'GET') {
+      const url = new URL(req.url);
+      const paramValue = url.searchParams.get('orderId');
+      orderId = paramValue || undefined;
+    } else {
+      const body = await req.json() as any;
+      orderId = body.orderId;
+    }
     
     if (!orderId) {
-      return res.status(400).json({
+      return new Response(JSON.stringify({
         success: false,
         message: 'Order ID is required'
-      });
+      }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
     // 读取私钥
@@ -48,16 +56,16 @@ export default async function handler(
     // 实际项目中，这里应该使用支付宝SDK查询订单
     const orderInfo = await queryAlipayOrder(orderId);
 
-    return res.status(200).json({
+    return new Response(JSON.stringify({
       success: true,
       ...orderInfo
-    });
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('Order query error:', error);
-    return res.status(500).json({
+    return new Response(JSON.stringify({
       success: false,
       message: 'Order query failed'
-    });
+    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
 

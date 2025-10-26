@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+// import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 const { AlipaySdk } = require('alipay-sdk');
@@ -21,20 +21,20 @@ interface NotifyResponse {
 }
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: Request,
+  ctx: any
 ) {
   try {
     // 只允许POST请求
     if (req.method !== 'POST') {
-      return res.status(405).json({
+      return new Response(JSON.stringify({
         success: false,
         message: 'Method not allowed'
-      });
+      }), { status: 405, headers: { 'Content-Type': 'application/json' } });
     }
 
     // 获取支付宝通知参数
-    const notifyParams = req.body;
+    const notifyParams = await req.json() as any;
     console.log('Alipay notification received:', notifyParams);
 
     // 验证签名
@@ -43,18 +43,18 @@ export default async function handler(
     
     if (!isValid) {
       console.error('Invalid signature for alipay notification');
-      return res.status(400).json({
+      return new Response(JSON.stringify({
         success: false,
         message: 'Invalid signature'
-      });
+      }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
     // 验证通知状态
     const tradeStatus = notifyParams.trade_status;
     if (!tradeStatus || (tradeStatus !== 'TRADE_SUCCESS' && tradeStatus !== 'TRADE_FINISHED')) {
       console.error('Invalid trade status:', tradeStatus);
-      // 即使状态不是成功，也应该返回success=true给支付宝，避免重复通知
-      return res.status(200).send('success');
+      // 即使状态不是成功，也应该返回success给支付宝，避免重复通知
+      return new Response('success', { status: 200 });
     }
 
     // 处理支付成功的业务逻辑
@@ -69,11 +69,11 @@ export default async function handler(
     // await updateOrderStatus(orderId, 'paid', alipayTradeNo, totalAmount);
 
     // 返回success给支付宝，防止重复通知
-    return res.status(200).send('success');
+    return new Response('success', { status: 200 });
   } catch (error) {
     console.error('Alipay notification error:', error);
     // 即使发生错误，也应该返回success给支付宝，避免重复通知
-    return res.status(200).send('success');
+    return new Response('success', { status: 200 });
   }
 }
 

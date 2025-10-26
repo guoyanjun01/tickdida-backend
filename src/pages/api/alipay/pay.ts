@@ -1,24 +1,24 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+// import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs'; 
 import path from 'path'; 
 const { AlipaySdk } = require('alipay-sdk');
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: Request,
+  ctx: any
 ) {
   try {
     if (req.method !== 'POST') {
-      res.status(405).json({ success: false, message: 'Method not allowed' });
-      return;
+      return new Response(JSON.stringify({ success: false, message: 'Method not allowed' }), 
+        { status: 405, headers: { 'Content-Type': 'application/json' } });
     }
 
     // 获取请求参数
-    const { orderId, amount } = req.body;
+    const { orderId, amount } = (await req.json()) as any;
     
     if (!orderId || !amount) {
-      res.status(400).json({ success: false, message: '缺少必要参数' });
-      return;
+      return new Response(JSON.stringify({ success: false, message: '缺少必要参数' }), 
+        { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
     // 读取证书内容（字符串） 
@@ -70,18 +70,18 @@ export default async function handler(
       notifyUrl: params.notify_url,
     });
 
-    res.status(200).json({
+    return new Response(JSON.stringify({
       success: true,
       paymentUrl: result,
       orderId: orderId,
       amount: amount
-    });
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('支付宝支付错误:', error);
-    res.status(500).json({ 
+    return new Response(JSON.stringify({ 
       success: false, 
       message: '服务器内部错误',
       error: error instanceof Error ? error.message : String(error)
-    });
+    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
