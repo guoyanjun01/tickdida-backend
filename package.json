@@ -1,0 +1,25 @@
+{ 
+   "name": "tickdida-backend", 
+   "version": "1.0.0", 
+   "description": "滴答滴答后端服务", 
+   "main": "dist/server.js", 
+   "scripts": { 
+     "dev": "wrangler dev", 
+     "vercel-build": "tsc",            // Pages 构建入口 
+     "build": "tsc", 
+     "start": "node dist/server.js" 
+   }, 
+   "dependencies": { 
+     "@cloudflare/workers-types": "^4.20240529.0",  // Pages 类型 
+     "alipay-sdk": "^4.14.0", 
+     "stripe": "^12.9.0" 
+   }, 
+   "devDependencies": { 
+     "@types/express": "^4.17.17", 
+     "@types/node": "^18.11.9", 
+     "typescript": "^4.9.3", 
+     "wrangler": "^3.57.0"            // 本地调试&部署 
+   }, 
+   "author": "", 
+   "license": "ISC" 
+ }
