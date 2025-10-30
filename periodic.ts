@@ -1,4 +1,4 @@
-// api/alipay/periodic.ts
+// periodic.ts - 支付宝定期支付协议创建模块
 import { AlipaySdk } from 'alipay-sdk';
 import { Request, Response } from 'express';
 
