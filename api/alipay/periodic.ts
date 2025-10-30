@@ -9,7 +9,7 @@ const alipay = new AlipaySdk({
 MIIDljCCAn6gAwIBAgIQICUQISB2glovqIicZ6oONjANBgkqhkiG9w0BAQsFADCBgjELMAkGA1UE
 BhMCQ04xFjAUBgNVBAoMDUFudCBGaW5hbmNpYWwxIDAeBgNVBAsMF0NlcnRpZmljYXRpb24gQXV0
 aG9yaXR5MTkwNwYDVQQDDDBBbnQgRmluYW5jaWFsIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IENs
-YXNzIDIgUjEwHhcNMjUxMDIxMTQwNTI0WhcNMzAxMDIwMTQwNTI0WjB3MQswCQYDVQQGEwJDTjES
+b3VkIFJTQTIwHhcNMjUxMDIxMTQwNTI0WhcNMzAxMDIwMTQwNTI0WjB3MQswCQYDVQQGEwJDTjES
 MBAGA1UECgwJ6YOt5b2m5ZCbMQ8wDQYDVQQLDAZBbGlwYXkxQzBBBgNVBAMMOuaUr+S7mOWunSjk
 uK3lm70p572R57uc5oqA5pyv5pyJ6ZmQ5YWs5Y+4LTIwODg3MzIwNzIxNjU1MDYwggEiMA0GCSqG
 SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCBwuczZe7A2SgUI0sL1C4BlSqmAgIS80WUEpFDfYSEpskA
@@ -28,34 +28,24 @@ JQI14dUu9MwuaQ==
   signType: 'RSA2',
 });
 
-export default async function handler(req: Request) {
-  if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
-  }
-
-  try {
-    const outAgreementNo = Date.now().toString();
-    const returnUrl = 'https://didadida-web.vercel.app/success';
-    const notifyUrl = 'https://tickdida-backend.pages.dev/api/alipay/notify';
-
-    const result = await alipay.exec('alipay.user.agreement.page.sign', {
-      bizContent: {
-        personalProductCode: 'CYCLE_GENERAL_AUTH',
-        outAgreementNo,
-        signValidityPeriod: '2y',
-        returnUrl,
-        notifyUrl,
-      },
-    });
-
-    return new Response(JSON.stringify({ url: result.body }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    console.error('创建定期支付协议失败:', error);
-    return new Response(JSON.stringify({ error: '创建定期支付协议失败' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
+export default async function handler(req: Request) { 
+   if (req.method !== 'GET') return new Response('Method Not Allowed', { status: 405 }); 
+ 
+   const outAgreementNo = Date.now().toString(); 
+   const returnUrl = 'https://didadida-web.vercel.app/success'; 
+   const notifyUrl = 'https://tickdida-backend.pages.dev/api/alipay/notify'; 
+ 
+   const result = await alipay.exec('alipay.user.agreement.page.sign', { 
+     bizContent: { 
+       personalProductCode: 'CYCLE_GENERAL_AUTH', 
+       outAgreementNo, 
+       signValidityPeriod: '2y', 
+       returnUrl, 
+       notifyUrl, 
+     }, 
+   }); 
+ 
+   return new Response(JSON.stringify({ url: result.body }), { 
+     headers: { 'Content-Type': 'application/json' }, 
+   }); 
+ }
