@@ -1,6 +1,6 @@
 import express from 'express';
 import { createPayment, notify, queryOrder, refund, closeOrder } from './alipayController';
-import periodic from '../../periodic';
+import periodic from './periodic';
 import authMiddleware from '../../middleware/authMiddleware';
 
 const router = express.Router();
